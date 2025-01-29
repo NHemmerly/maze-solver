@@ -1,24 +1,26 @@
 from point import Line, Point
 
 class Cell():
-    def __init__(self, win, x1, x2, y1, y2):
+    def __init__(self, win):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
-        self._x1 = x1
-        self._x2 = x2
-        self._y1 = y1
-        self._y2 = y2
+        self._x1 = None
+        self._x2 = None
+        self._y1 = None
+        self._y2 = None
         self._win = win
 
-    def draw(self):
-        top_left = (self._x1, self._y1)
-        bottom_right = (self._x2, self._y2)
-        point_1 = Point(top_left[0], top_left[1])
-        point_2 = Point(bottom_right[0], bottom_right[1])
-        point_3 = Point(bottom_right[0], top_left[1])
-        point_4 = Point(top_left[0], bottom_right[1])
+    def draw(self, x1, y1, x2, y2):
+        self._x1 = x1
+        self._y1 = y1
+        self._x2 = x2
+        self._y2 = y2
+        point_1 = Point(x1, y1)
+        point_2 = Point(x2, y2)
+        point_3 = Point(x2, y1)
+        point_4 = Point(x1, y2)
         if self.has_left_wall:
             left_line = Line(point_1, point_4)
             left_line.draw(self._win, "black")
