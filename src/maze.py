@@ -59,20 +59,28 @@ class Maze():
         self._cells[-1][-1].has_bottom_wall = False
         self._draw_cell(len(self._cells) - 1,len(self._cells[-1]) - 1)
 
-    def _possible_paths(self, i, j):
+    def _possible_paths(self, i, j, broken=False):
         possible = []
         right = i + 1
         left = i - 1
         up = j - 1
         down = j + 1
         if right < len(self._cells):
-            if not self._cells[right][j].visited: possible.append((right, j))
+            if broken is True and self._cells[i][j].has_right_wall == True:
+                pass
+            elif not self._cells[right][j].visited: possible.append((right, j))
         if left >= 0:
-            if not self._cells[left][j].visited: possible.append((left, j))
+            if broken is True and self._cells[i][j].has_left_wall == True:
+                pass
+            elif not self._cells[left][j].visited: possible.append((left, j))
         if up >= 0:
-            if not self._cells[i][up].visited: possible.append((i, up))
+            if broken is True and self._cells[i][j].has_top_wall == True:
+                pass
+            elif not self._cells[i][up].visited: possible.append((i, up))
         if down < len(self._cells[i]):
-            if not self._cells[i][down].visited: possible.append((i, down))
+            if broken is True and self._cells[i][j].has_bottom_wall == True:
+                pass
+            elif not self._cells[i][down].visited: possible.append((i, down))
         return possible
 
     def _break_walls_r(self, i, j):
@@ -94,6 +102,24 @@ class Maze():
             elif breakage[1] < 0:
                 self._cells[i][j].has_top_wall = False
             self._break_walls_r(direction[0], direction[1])
+
+    def solve(self):
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+        self._cells[i][j].visited = True
+        if self._cells[i][j] == self._cells[-1][-1]:
+            return True
+        to_visit = []
+        to_visit.extend(self._possible_paths(i, j, True))
+        for direction in to_visit:
+            self._cells[i][j].draw_move(self._cells[direction[0]][direction[1]])
+            if self._solve_r(direction[0], direction[1]):
+                return True
+            self._cells[i][j].draw_move(self._cells[direction[0]][direction[1]], True)
+        return False
+
 
     def _reset_cells_visited(self):
         for col in self._cells:
